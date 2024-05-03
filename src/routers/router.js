@@ -6,7 +6,7 @@ const router = express.Router()
 router.get("/posts", async (req, res) => {
     await PostModel
         .find()
-        .catch((err) => (err) => res.status(500).send(err.message))
+        .catch((err) => res.status(500).send(err.message))
         .then(value => res.json(value))
 })
 
