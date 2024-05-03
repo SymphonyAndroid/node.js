@@ -6,7 +6,7 @@ const router = express.Router()
 router.get("/posts", async (req, res) => {
     await PostModel
         .find()
-        .catch((err) => console.log(err))
+        .catch((err) => (err) => res.status(500).send(err.message))
         .then(value => res.json(value))
 })
 
@@ -15,7 +15,7 @@ router.get("/post", async (req, res) => {
     let id = req.query.id
     await PostModel
         .findById(id)
-        .catch((err) => console.log(err))
+        .catch((err) => res.status(500).send(err.message))
         .then(value => res.json(value))
 })
 
@@ -29,8 +29,11 @@ router.put("/post/:id", async (req, res) => {
             text: req.body.text
         }
     )
-    await PostModel.findByIdAndUpdate(id, post)
-        .catch((err) => console.log(err))
+    await PostModel.findByIdAndDelete(id)
+        .catch((err) => res.status(500).send(err.message))
+
+    await post.save()
+        .catch((err) => res.status(500).send(err.message))
         .then(value => res.json(value))
 })
 
@@ -44,24 +47,24 @@ router.post("/post", async (req, res) => {
         }
     )
     await post.save()
-        .catch((err) => console.log(err))
+        .catch((err) => res.status(500).send(err.message))
         .then(value => res.json(value))
 })
 
 //запит на видалення за id
-router.delete("/post", async (req, res) => {
-    let id = req.query.id
+router.delete("/post/:id", async (req, res) => {
+    let id = req.params.id
     await PostModel
         .findByIdAndDelete(id)
-        .catch((err) => console.log(err))
+        .catch((err) => res.status(500).send(err.message))
         .then(value => res.json(value))
 })
 
 //запит на видалення всіх записів у бд
-router.delete("/post", async (req, res) => {
+router.delete("/posts", async (req, res) => {
     await PostModel
         .deleteMany()
-        .catch((err) => console.log(err))
+        .catch((err) => res.status(500).send(err.message))
         .then(value => res.json(value))
 })
 
